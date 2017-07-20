@@ -83,9 +83,11 @@ Welcome to the world of Saltstack Salt. Simply put, it is a configuration manage
     * `{{ listx|join(', ') }}`
   * Whitespace
     * `{%- ... -%}`
-    * ```{% for item in seq -%}
+    * ```
+      {% for item in seq -%}
         {{ item }}
-      {%- endfor %}```
+      {%- endfor %}
+      ```
   * Operators
     * `in`
       * `{% if "string" in myvar %} ...`
