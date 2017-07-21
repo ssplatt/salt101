@@ -195,17 +195,20 @@ In this exercise, we will produce three YAML files. The states top file, the pil
   4. Enter the pillar directory, `cd /srv/pillar`
   5. Create a file named "top.sls", `touch top.sls`
   6. Edit top.sls, `vi top.sls` enter this data into it: (if using vi, hit `i` to insert text)
+  
     ```
     base:
       "*":
         - testing
     ```
+    
   7. Save the file and exit the editor. If using vi, hit the `escape` key to leave input mode, then `ZZ` or `:wq` to write and quit.
 
 #### Create the testing pillar file
 
   1. While in `/srv/pillar`, make a new file "testing.sls", `touch testing.sls`
   2. Edit testing.sls and enter this text into it:
+  
     ```
     anewtest:
       enabled: true
@@ -215,6 +218,7 @@ In this exercise, we will produce three YAML files. The states top file, the pil
           varone: foo
           vartwo: bar
     ```
+    
   3. Save the file and exit the editor
   4. Check to see if Salt recognizes the pillar data, run `salt-call --local pillar.items`
   
@@ -244,11 +248,13 @@ In this exercise, we will produce three YAML files. The states top file, the pil
   2. Change to the states directory, `cd /srv/salt`
   3. Create the top file, `touch top.sls`
   4. Edit the top file and put this data in it:
+  
     ```
     base:
       "*":
         - teststates
     ```
+    
   5. Save the file and exit the editor
 
 ## Basics of Jinja
@@ -325,6 +331,7 @@ In this exercise, we will create a configuration file with Jinja templating.
     {% endfor %}
     {% endif %}
     ```
+    
   4. Save the file and exit the editor
 
 ## Beginning Configuration Management
@@ -336,6 +343,7 @@ This exercise will result in a Salt state file which will define what commands a
   1. Change into the salt states directory, `cd /srv/salt`
   2. Create the "teststates.sls" file, `touch teststates.sls`
   3. Edit the file and enter this data into it:
+  
     ```
     {% set anewtest = pillar['anewtest'] %}
 
@@ -358,12 +366,14 @@ This exercise will result in a Salt state file which will define what commands a
 
     {% endif %}
     ```
+    
   4. Save the file and exit the editor
 
 ### Running your first highstate
 With all of the files in place from the previous exercises, you should now be able to run your first "highstate".
 
   1. From any directory, execute the highstate, `salt-call --local state.highstate`
+  
     ```
     # salt-call --local state.highstate
     local:
@@ -388,13 +398,17 @@ With all of the files in place from the previous exercises, you should now be ab
     Total states run:     1
     Total run time:  17.802 ms
     ```
+    
   2. Change directories to `/root`
   3. Check to see if testfile.conf exists and has the proper permissions, `ls -la testfile.conf`
+  
     ```
     # ls -la testfile.conf
     -rw------- 1 root root 109 Jul 21 20:53 testfile.conf
     ```
+    
   4. Check that the contents of the file is what we expect, `cat testfile.conf`
+  
     ```
     # cat testfile.conf
     
@@ -409,7 +423,9 @@ With all of the files in place from the previous exercises, you should now be ab
 
     vartwo = bar
     ```
+    
   5. Run another highstate to see if our state definition is idempotent, `salt-call --local state.highstate`
+  
     ```
     # salt-call --local state.highstate
     local:
@@ -431,7 +447,7 @@ With all of the files in place from the previous exercises, you should now be ab
     Total states run:     1
     Total run time:  16.498 ms
     ```
-    There should be no changes no matter how many times you run the `state.highstate` command.
+    
   6. If you'd like to see the file change, you can edit one of the values in `/srv/pillar/testing.sls`
 
 # Congratulations! You are now able to manage the configuration of a server using Salt.
