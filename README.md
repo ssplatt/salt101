@@ -312,6 +312,7 @@ In this exercise, we will create a configuration file with Jinja templating.
   1. Change into the states directory, `cd /srv/salt`
   2. Make a new file, "testfile.conf.j2", `touch testfile.conf.j2`
   3. Edit the file and put this data into it:
+  
     ```
     # This is a test configuration file
     # Managed by Salt
