@@ -91,7 +91,7 @@ Salt can be used as a simple configuration management system, but automation and
         - if the file does not have the defined content, change the contents
         - if the file is not owned by the defined user, change the ownership
         - if the file does not have the defined mode, change it
-    - Idempotent
+    - [Idempotent](http://www.dictionary.com/browse/idempotent)
       - applying a salt state over and over with the same pillar definition should not result in changes on the minion
   - Pillar
     - User defined values for a Minion
