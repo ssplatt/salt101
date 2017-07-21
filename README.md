@@ -196,12 +196,12 @@ In this exercise, we will produce three YAML files. The states top file, the pil
   5. Create a file named "top.sls", `touch top.sls`
   6. Edit top.sls, `vi top.sls` enter this data into it: (if using vi, hit `i` to insert text)
   
-    ```
-    base:
-      "*":
-        - testing
-    ```
-    
+```
+base:
+  "*":
+    - testing
+```
+
   7. Save the file and exit the editor. If using vi, hit the `escape` key to leave input mode, then `ZZ` or `:wq` to write and quit.
 
 #### Create the testing pillar file
@@ -209,38 +209,38 @@ In this exercise, we will produce three YAML files. The states top file, the pil
   1. While in `/srv/pillar`, make a new file "testing.sls", `touch testing.sls`
   2. Edit testing.sls and enter this text into it:
   
-    ```
-    anewtest:
-      enabled: true
-      config:
-        testvar: hello world
-        testloop:
-          varone: foo
-          vartwo: bar
-    ```
-    
+```
+anewtest:
+  enabled: true
+  config:
+    testvar: hello world
+    testloop:
+      varone: foo
+      vartwo: bar
+```
+
   3. Save the file and exit the editor
   4. Check to see if Salt recognizes the pillar data, run `salt-call --local pillar.items`
   
-    ```
-    # salt-call --local pillar.items
-    local:
+```
+~# salt-call --local pillar.items
+local:
+    ----------
+    anewtest:
         ----------
-        anewtest:
+        enabled:
+            True
+        config:
             ----------
-            enabled:
-                True
-            config:
+            testvar:
+                hello world
+            testloop:
                 ----------
-                testvar:
-                    hello world
-                testloop:
-                    ----------
-                    varone:
-                        foo
-                    vartwo:
-                        bar
-    ```
+                varone:
+                    foo
+                vartwo:
+                    bar
+```
 
 #### Create the states top file
 
@@ -249,12 +249,12 @@ In this exercise, we will produce three YAML files. The states top file, the pil
   3. Create the top file, `touch top.sls`
   4. Edit the top file and put this data in it:
   
-    ```
-    base:
-      "*":
-        - teststates
-    ```
-    
+```
+base:
+  "*":
+    - teststates
+```
+
   5. Save the file and exit the editor
 
 ## Basics of Jinja
@@ -319,19 +319,19 @@ In this exercise, we will create a configuration file with Jinja templating.
   2. Make a new file, "testfile.conf.j2", `touch testfile.conf.j2`
   3. Edit the file and put this data into it:
   
-    ```
-    # This is a test configuration file
-    # Managed by Salt
+```
+# This is a test configuration file
+# Managed by Salt
 
-    A Value = {{ varpass.testvar }}
+A Value = {{ varpass.testvar }}
 
-    {% if varpass.testloop is defined %}
-    {% for key, val in varpass.testloop.iteritems() %}
-    {{ key }} = {{ val }}
-    {% endfor %}
-    {% endif %}
-    ```
-    
+{% if varpass.testloop is defined %}
+{% for key, val in varpass.testloop.iteritems() %}
+{{ key }} = {{ val }}
+{% endfor %}
+{% endif %}
+```
+
   4. Save the file and exit the editor
 
 ## Beginning Configuration Management
@@ -344,29 +344,29 @@ This exercise will result in a Salt state file which will define what commands a
   2. Create the "teststates.sls" file, `touch teststates.sls`
   3. Edit the file and enter this data into it:
   
-    ```
-    {% set anewtest = pillar['anewtest'] %}
+```
+{% set anewtest = pillar['anewtest'] %}
 
-    {% if anewtest.enabled %}
+{% if anewtest.enabled %}
 
-    test_configure_file:
-      file.managed:
-        - name: /root/testfile.conf
-        - source: salt://testfile.conf.j2
-        - user: root
-        - group: root
-        - mode: 600
-        - template: jinja
-        - varpass: {{ anewtest.config }}
+test_configure_file:
+  file.managed:
+    - name: /root/testfile.conf
+    - source: salt://testfile.conf.j2
+    - user: root
+    - group: root
+    - mode: 600
+    - template: jinja
+    - varpass: {{ anewtest.config }}
 
-    {% else %}
+{% else %}
 
-    anewtest_not_enabled:
-      test.succeed_without_changes
+anewtest_not_enabled:
+  test.succeed_without_changes
 
-    {% endif %}
-    ```
-    
+{% endif %}
+```
+
   4. Save the file and exit the editor
 
 ### Running your first highstate
@@ -374,80 +374,80 @@ With all of the files in place from the previous exercises, you should now be ab
 
   1. From any directory, execute the highstate, `salt-call --local state.highstate`
   
-    ```
-    # salt-call --local state.highstate
-    local:
-    ----------
-              ID: test_configure_file
-        Function: file.managed
-            Name: /root/testfile.conf
-          Result: True
-         Comment: File /root/testfile.conf updated
-         Started: 20:53:24.839959
-        Duration: 17.802 ms
-         Changes:
-                  ----------
-                  diff:
-                      New file
+```
+~# salt-call --local state.highstate
+local:
+----------
+          ID: test_configure_file
+    Function: file.managed
+        Name: /root/testfile.conf
+      Result: True
+     Comment: File /root/testfile.conf updated
+     Started: 20:53:24.839959
+    Duration: 17.802 ms
+     Changes:
+              ----------
+              diff:
+                  New file
 
-    Summary for local
-    ------------
-    Succeeded: 1 (changed=1)
-    Failed:    0
-    ------------
-    Total states run:     1
-    Total run time:  17.802 ms
-    ```
-    
+Summary for local
+------------
+Succeeded: 1 (changed=1)
+Failed:    0
+------------
+Total states run:     1
+Total run time:  17.802 ms
+```
+
   2. Change directories to `/root`
   3. Check to see if testfile.conf exists and has the proper permissions, `ls -la testfile.conf`
   
-    ```
-    # ls -la testfile.conf
-    -rw------- 1 root root 109 Jul 21 20:53 testfile.conf
-    ```
-    
+```
+~# ls -la testfile.conf
+-rw------- 1 root root 109 Jul 21 20:53 testfile.conf
+```
+
   4. Check that the contents of the file is what we expect, `cat testfile.conf`
   
-    ```
-    # cat testfile.conf
-    
-    # This is a test configuration file
-    # Managed by Salt
+```
+~# cat testfile.conf
 
-    A Value = hello world
+# This is a test configuration file
+# Managed by Salt
+
+A Value = hello world
 
 
 
-    varone = foo
+varone = foo
 
-    vartwo = bar
-    ```
-    
+vartwo = bar
+```
+
   5. Run another highstate to see if our state definition is idempotent, `salt-call --local state.highstate`
   
-    ```
-    # salt-call --local state.highstate
-    local:
-    ----------
-              ID: test_configure_file
-        Function: file.managed
-            Name: /root/testfile.conf
-          Result: True
-         Comment: File /root/testfile.conf is in the correct state
-         Started: 20:57:08.127061
-        Duration: 16.498 ms
-         Changes:
+```
+~# salt-call --local state.highstate
+local:
+----------
+          ID: test_configure_file
+    Function: file.managed
+        Name: /root/testfile.conf
+      Result: True
+     Comment: File /root/testfile.conf is in the correct state
+     Started: 20:57:08.127061
+    Duration: 16.498 ms
+     Changes:
 
-    Summary for local
-    ------------
-    Succeeded: 1
-    Failed:    0
-    ------------
-    Total states run:     1
-    Total run time:  16.498 ms
-    ```
-    
+Summary for local
+------------
+Succeeded: 1
+Failed:    0
+------------
+Total states run:     1
+Total run time:  16.498 ms
+```
+
   6. If you'd like to see the file change, you can edit one of the values in `/srv/pillar/testing.sls`
 
 # Congratulations! You are now able to manage the configuration of a server using Salt.
