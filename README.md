@@ -217,6 +217,7 @@ In this exercise, we will produce three YAML files. The states top file, the pil
     ```
   3. Save the file and exit the editor
   4. Check to see if Salt recognizes the pillar data, run `salt-call --local pillar.items`
+  
     ```
     # salt-call --local pillar.items
     local:
