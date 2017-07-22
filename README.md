@@ -96,8 +96,8 @@ Salt can be used as a simple configuration management system, but automation and
   - Pillar
     - User defined values for a Minion
     - Pillar data is referenced in state files and Jinja templates
-      - `pkg_name: vim`
-      - `enabled: false`
+    - `pkg_name: vim`
+    - `enabled: false`
   - Grains
     - Facts about the environment on the minion
       - OS type, version, kernel version
