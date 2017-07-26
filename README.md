@@ -74,9 +74,13 @@ Salt can be used as a simple configuration management system, but automation and
       - `salt` run from a master and targets one or more minions
       - `salt-call` runs from a minion and targets the same minion
         - `salt-call --local` does not reach out to a master, uses local cache
+  - SLS, Salt State files
+    - YAML and Jinja rendering by default
+  - Everything is a module
   - Execution Modules
     - "one off" execution runs
     - usually beneficial to remotely execute a command on a minion
+    - Generally better to run a specific module rather than `cmd.run`
     - `salt-call --local sys.doc`
     - `salt-call --local sys.doc pkg`
     - `salt-call --local sys.doc pkg.install`
@@ -97,22 +101,23 @@ Salt can be used as a simple configuration management system, but automation and
                   2:7.4.488-7+deb8u3
               old:
       ```
-  - SLS, Salt State files
-    - YAML and Jinja rendering by default
   - States
     - Actions to perform on a Minion
     - Similar to execution modules
-      - `pkg.installed`
+      - [pkg.installed](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.pkg.html#salt.states.pkg.installed)
         - if the defined package is not installed, install it
-      - `file.managed`
-        - if the file does not have the defined content, change the contents
-        - if the file is not owned by the defined user, change the ownership
-        - if the file does not have the defined mode, change it
+      - [file.managed](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.file.html#salt.states.file.managed)
+        - ensure the content of the file is as defined
+        - ensure the ownership of the file is as defined
+        - ensure the mode of the file is as defined
     - [Idempotent](http://www.dictionary.com/browse/idempotent)
       - applying a salt state over and over with the same pillar definition should not result in changes on the minion
+    - Generally better to run a specific module rather than `cmd.run`
   - Pillar
     - User defined values for a Minion
     - Pillar data is referenced in state files and Jinja templates
+    - Do not reference Pillar inside of Pillar
+      - Pillar is rendered once, at the start of a run
     - `pkg_name: vim`
     - `enabled: false`
   - Grains
@@ -121,6 +126,7 @@ Salt can be used as a simple configuration management system, but automation and
       - CPU info
       - Hostname, IPs, MAC addresses
       - Disk drives
+      - etc.
     - Minions cannot see the grains of other minions
     - `salt-call --local grains.items`
     - `salt-call --local grains.get virtual`
@@ -134,7 +140,7 @@ Salt can be used as a simple configuration management system, but automation and
           lo:
               - 127.0.0.1
       ```
-    - Can be used in Jinja `{{ grains.oscodename }}`
+    - Can be referenced in Pillar or States
   - Targeting
     - When commanding minions from a master, you can run the module against all minions or a subset of them.
     - Used in the Top files
@@ -284,6 +290,9 @@ Jinja is the default templating language for Salt. Jinja is not a programming la
     - Variables
       - `{{ foo.bar }}`
       - `{{ foo['bar'] }}`
+    - Salt Grains
+      - `{{ grains.oscodename }}`
+      - `{{ grains['oscodename'] }}`
   - Statements
     - `{% ... %}`
     - Tests
@@ -298,18 +307,22 @@ Jinja is the default templating language for Salt. Jinja is not a programming la
       - `<` less than
       - `<=` less then or equal to
     - Operators
-      - `in` test if thing is in other thing
+      - `in` test if a string is in another
         - `{% if "string" in myvar %} ...`
-      - `is` test if 
+      - `is`, a special true/false test
         - `{% if myvar is defined %} ...`
-      - `|` 
+        - `{% if myvar is iterable %} ...`
+      - `|`, apply filter
         - `{{ myvar | capitalize }}`
-      - `~`
+      - `~`, concatenate strings
         - `{{ myvar ~ " concatenate this string" }}`
     - Logic
       - and
+        - `{% if string is defined and string == "this" %} ...`
       - or
+        - `{% if string is defined or if string == "0" %} ...`
       - not
+        - ` {% if string is not defined %} ...`
     - Loops
       - `For`
         - `{% for i in mylist %} ... {% endfor %}`
