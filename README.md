@@ -1,14 +1,18 @@
 # Salt 101 - The Basics of Saltstack Salt
 Welcome to the world of Saltstack Salt. Simply put, it is a configuration management system written in Python and controlled using YAML with Jinja templating.
 
-# Table of Contents
+## Table of Contents
 
   * [Prerequisites](#prerequisites)
   * [References](#references)
   * [Install Salt](#install-salt)
   * [Basics of Salt](#basics-of-salt)
   * [Basics of YAML](#basics-of-yaml)
-  * [anewtest:](#anewtest)
+    * [YAML Exercises](#yaml-excercises)
+      * [Create the Pillar Top File](#create-the-pillar-top-file)
+      * [Create the Testing Pillar File](#create-the-testing-pillar-file)
+      * [Create the States Top File](#create-the-states-top-file)
+  * [Basics of Jinja](#basics-of-jinja)
      * [Jinja Excercise](#jinja-excercise)
   * [Beginning Configuration Management](#beginning-configuration-management)
      * [State file exercise](#state-file-exercise)
