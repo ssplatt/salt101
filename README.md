@@ -316,10 +316,10 @@ Jinja is the default templating language for Salt. Jinja is not a programming la
     - Comparisons
       - `==` is equal
       - `!=` is not equal
-      - `>` greater than
-      - `>=` greater than or equal to
-      - `<` less than
-      - `<=` less then or equal to
+      - `>` is greater than
+      - `>=` is greater than or equal to
+      - `<` is less than
+      - `<=` is less than or equal to
     - Operators
       - `in` test if a string is in another string, mapping, or sequence
         - `{% if "string" in myvar %} ...`
