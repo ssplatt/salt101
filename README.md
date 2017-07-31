@@ -158,7 +158,7 @@ Salt can be used as a simple configuration management system, but automation and
     - [more advanced targeting in the Salt Docs](https://docs.saltstack.com/en/latest/topics/targeting/index.html)
   - Highstate
     - This will apply all of the configured state definitions on the targeted minions
-    - merges `state/top.sls` and `pillar/top.sls` to configure the minion
+    - merges `/srv/salt/top.sls` and `/srv/pillar/top.sls` to configure the minion
     - `salt-call --local state.highstate`
   - Top.sls
     - The main definition files for the Configuration of Minions in your environment
