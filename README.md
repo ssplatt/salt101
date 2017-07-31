@@ -501,6 +501,7 @@ Total run time:  16.498 ms
 ## Practice on your own
 Take the concepts learned in this class to the next level. Try to extend the files created earlier to apply more configuration to the virtual instance.
 
+  - Return to the `testfile.conf.j2` and clean up the whitespace that is rendered
   - look over the list of [built in state modules](https://docs.saltstack.com/en/latest/salt-modindex.html#cap-s). Find one that is interesting to you and add it to `/srv/salt/teststates.sls`
     - Ideas:
       - [archive.extracted](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.archive.html#module-salt.states.archive)
