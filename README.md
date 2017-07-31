@@ -17,6 +17,7 @@ Welcome to the world of Saltstack Salt. Simply put, it is a configuration manage
   * [Beginning Configuration Management](#beginning-configuration-management)
      * [State file exercise](#state-file-exercise)
      * [Running your first highstate](#running-your-first-highstate)
+  * [Practice on your own](#practice-on-you-own)
 
 ## Prerequisites
 Before arriving at class, please make sure these prerequisites are installed on your system.
@@ -40,11 +41,12 @@ Before arriving at class, please make sure these prerequisites are installed on 
 ## References
 You may find it useful to browse these links prior to the class, or leave them open for reference during the class.
 
-  - https://docs.saltstack.com/en/getstarted/
-  - https://docs.saltstack.com/en/latest/topics/using_salt.html
   - http://www.yaml.org/start.html
   - http://jinja.pocoo.org/docs/2.9/templates/
+  - https://docs.saltstack.com/en/getstarted/
+  - https://docs.saltstack.com/en/latest/topics/using_salt.html
   - https://docs.saltstack.com/en/latest/salt-modindex.html
+  - https://docs.saltstack.com/en/latest/contents.html
 
 ## Install Salt
 Set up your experimental environment. We will be running 'masterless', so we will only install the 'minion' package and run all commands locally.
@@ -118,8 +120,11 @@ Salt can be used as a simple configuration management system, but automation and
     - Pillar data is referenced in state files and Jinja templates
     - Do not reference Pillar inside of Pillar
       - Pillar is rendered once, at the start of a run
-    - `pkg_name: vim`
-    - `enabled: false`
+    - `pkg_name: httpd` vs. `pkg_name: apache2`
+    - `enabled: false` = [toggles](https://en.wikipedia.org/wiki/Feature_toggle)
+    - View pillar for a minion:
+      - `salt-call --local pillar.items`
+      - `salt-call --local pilar.get apache`
   - Grains
     - Facts about the environment on the minion
       - OS type, version, kernel version
@@ -141,12 +146,16 @@ Salt can be used as a simple configuration management system, but automation and
               - 127.0.0.1
       ```
     - Can be referenced in Pillar or States
+    - Can set custom grains
+      - `Datacenter: US-East`
+      - `Group: Web`
   - Targeting
     - When commanding minions from a master, you can run the module against all minions or a subset of them.
     - Used in the Top files
     - The most basic: The Glob
       - `salt \* pkg.install vim`
       - `salt db\* pkg.install vim`
+    - [more advanced targeting in the Salt Docs](https://docs.saltstack.com/en/latest/topics/targeting/index.html)
   - Highstate
     - This will apply all of the configured state definitions on the targeted minions
     - merges `state/top.sls` and `pillar/top.sls` to configure the minion
@@ -155,9 +164,9 @@ Salt can be used as a simple configuration management system, but automation and
     - The main definition files for the Configuration of Minions in your environment
     - Used during `highstate` runs
     - Can define multiple environments, `base` is the default
-    - `states/top.sls`
+    - `/srv/salt/top.sls`
       - define which state files to apply to which minions
-    - `pillar/top.sls`
+    - `/srv/pillar/top.sls`
       - define which pillar files to apply to which minions
   - init.sls
     - a special sls file that will be called if only the Directory name is referenced
@@ -167,23 +176,26 @@ Salt can be used as a simple configuration management system, but automation and
       - `mysql/init.sls`
 
 ## Basics of YAML
-The majority of the code you touch in Salt is YAML. YAML is very human readable and easy to use.
+The majority of the code you touch in Salt is YAML. YAML is very human readable and easy to use. You can refer to the official Salt documentation for more information on how [YAML is used within Salt](https://docs.saltstack.com/en/latest/topics/yaml/index.html), too.
 
   - Key / Value pairs
     - Strings
       - `myvar: value`
+      - `myvar: ""`
     - Dictionaries (Mapping)
       - ```
-        mydict:
+        myvar:
           key: value
         ```
+      - `myvar: {}`
     - Lists (Sequence)
       - ```
-        mylist:
+        myvar:
           - one
           - two
           - three
         ```
+      - `myvar: []`
     - Multiline input
       - ```
         myvar: |
@@ -191,6 +203,8 @@ The majority of the code you touch in Salt is YAML. YAML is very human readable 
           on multiple lines
           that will act as one
         ```
+  - Indentation is very important
+    - typical is 2 soft tabs (spaces)
   - Comments
     - `#` begins a comment, even if not at the very start of a line
     - CAUTION: using this style of comment will not stop Jinja from parsing on that line
@@ -208,7 +222,7 @@ The majority of the code you touch in Salt is YAML. YAML is very human readable 
     - Lists will overwrite
 
 ### YAML Excercises
-In this exercise, we will produce three YAML files. The states top file, the pillar top file, and a basic pillar file. This will get us ready to start applying state to a machine.
+In the next few exercises, we will produce three YAML files. The states top file, the pillar top file, and a basic pillar file. This will get us ready to start applying state to a machine.
 
 #### Create the pillar top file
 
@@ -281,7 +295,7 @@ base:
   5. Save the file and exit the editor
 
 ## Basics of Jinja
-Jinja is the default templating language for Salt. Jinja is not a programming language. It can do some things that you'd find in Python, for example, but it is not intended to replace a true scripting or programming language. If you are trying to do advanced things with Jinja, you will know when it is time to move onto one of the other templating options.
+Jinja is the default templating language for Salt. Jinja is not a programming language. It can do some things that you'd find in Python, for example, but it is not intended to replace a true scripting or programming language. If you are trying to do advanced things with Jinja, you will know when it is time to move onto one of the other templating options. The official Salt documentation has an extensive description of how to use [Jinja with Salt](https://docs.saltstack.com/en/latest/topics/jinja/index.html), also.
 
   - Comments
     - Can be multiline or single line
@@ -307,9 +321,9 @@ Jinja is the default templating language for Salt. Jinja is not a programming la
       - `<` less than
       - `<=` less then or equal to
     - Operators
-      - `in` test if a string is in another
+      - `in` test if a string is in another string, mapping, or sequence
         - `{% if "string" in myvar %} ...`
-      - `is`, a special true/false test
+      - `is`, a [special true/false test](http://jinja.pocoo.org/docs/2.9/templates/#builtin-tests)
         - `{% if myvar is defined %} ...`
         - `{% if myvar is iterable %} ...`
       - `|`, apply filter
@@ -334,13 +348,17 @@ Jinja is the default templating language for Salt. Jinja is not a programming la
       - `{% set myvar = "my string" %}`
   - Filters
     - `{{ listx|join(', ') }}`
+    - [Salt has many filters](https://docs.saltstack.com/en/latest/topics/jinja/index.html#filters) which extend those that are built into Jinja
   - Whitespace
+    - Typically, statement blocks will just be removed when rendered, leaving the extra line breaks
+    - You can use a `-` attached to the `%` to remove whitespace and line breaks
     - `{%- ... -%}`
     - ```
       {% for item in seq -%}
         {{ item }}
       {%- endfor %}
       ```
+    - This can product unexpected results, make sure you double check
 
 ### Jinja Excercise
 In this exercise, we will create a configuration file with Jinja templating.
@@ -430,14 +448,14 @@ Total run time:  17.802 ms
 ```
 
   2. Change directories to `/root`
-  3. Check to see if testfile.conf exists and has the proper permissions, `ls -la testfile.conf`
+  3. Verify that testfile.conf exists and has the proper permissions, `ls -la testfile.conf`
   
 ```
 ~# ls -la testfile.conf
 -rw------- 1 root root 109 Jul 21 20:53 testfile.conf
 ```
 
-  4. Check that the contents of the file is what we expect, `cat testfile.conf`
+  4. Verify that the contents of the file is what we expect, `cat testfile.conf`
   
 ```
 ~# cat testfile.conf
@@ -454,7 +472,7 @@ varone = foo
 vartwo = bar
 ```
 
-  5. Run another highstate to see if our state definition is idempotent, `salt-call --local state.highstate`
+  5. Run another highstate to verify that our state definition is idempotent, `salt-call --local state.highstate`
   
 ```
 ~# salt-call --local state.highstate
@@ -478,6 +496,27 @@ Total states run:     1
 Total run time:  16.498 ms
 ```
 
-  6. If you'd like to see the file change, you can edit one of the values in `/srv/pillar/testing.sls`
+**Congratulations! You are now able to manage the configuration of a server using Salt.**
 
-# Congratulations! You are now able to manage the configuration of a server using Salt.
+## Practice on your own
+Take the concepts learned in this class to the next level. Try to extend the files created earlier to apply more configuration to the virtual instance.
+
+  - look over the list of [built in state modules](https://docs.saltstack.com/en/latest/salt-modindex.html#cap-s). Find one that is interesting to you and add it to `/srv/salt/teststates.sls`
+    - Ideas:
+      - [archive.extracted](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.archive.html#module-salt.states.archive)
+      - [git.latest](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.git.html#salt.states.git.latest)
+      - [pkgrepo.managed](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.pkgrepo.html)
+      - [schedule.present](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.schedule.html)
+      - [service.running](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.service.html)
+      - [slack.post_message](https://docs.saltstack.com/en/latest/ref/states/all/salt.states.slack.html)
+  - Pick another program to install and configure
+    - Bonus points for creating new pillar and state files, and adding them to the Top files.
+    - Don't bother templating out every line of every configuration file
+      - "iterative design", "minimum viable product"
+      - Solve one use-case first, refactor later
+    - Ideas:
+      - mysql
+      - apache
+      - nginx
+      - jenkins
+      - gitlab
