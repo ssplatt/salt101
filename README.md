@@ -8,12 +8,12 @@ Welcome to the world of Saltstack Salt. Simply put, it is a configuration manage
   * [Install Salt](#install-salt)
   * [Basics of Salt](#basics-of-salt)
   * [Basics of YAML](#basics-of-yaml)
-    * [YAML Exercises](#yaml-excercises)
+    * [YAML Exercises](#yaml-exercises)
       * [Create the Pillar Top File](#create-the-pillar-top-file)
       * [Create the Testing Pillar File](#create-the-testing-pillar-file)
       * [Create the States Top File](#create-the-states-top-file)
   * [Basics of Jinja](#basics-of-jinja)
-     * [Jinja Excercise](#jinja-excercise)
+     * [Jinja Exercise](#jinja-exercise)
   * [Beginning Configuration Management](#beginning-configuration-management)
      * [State file exercise](#state-file-exercise)
      * [Running your first highstate](#running-your-first-highstate)
@@ -221,7 +221,7 @@ The majority of the code you touch in Salt is YAML. YAML is very human readable 
     - Strings will overwrite
     - Lists will overwrite
 
-### YAML Excercises
+### YAML Exercises
 In the next few exercises, we will produce three YAML files. The states top file, the pillar top file, and a basic pillar file. This will get us ready to start applying state to a machine.
 
 #### Create the pillar top file
@@ -360,7 +360,7 @@ Jinja is the default templating language for Salt. Jinja is not a programming la
       ```
     - This can product unexpected results, make sure you double check
 
-### Jinja Excercise
+### Jinja Exercise
 In this exercise, we will create a configuration file with Jinja templating.
 
   1. Change into the states directory, `cd /srv/salt`
